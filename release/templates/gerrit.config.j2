@@ -1,0 +1,24 @@
+[gerrit]
+	basePath = git
+	serverId = f466395d-1b65-44bd-883a-4a7715e4d44c
+	canonicalWebUrl = http://localhost:8082/
+[database]
+	type = h2
+	database = /opt/gerrit/app_dir/db/ReviewDB
+[index]
+	type = LUCENE
+[auth]
+	type = DEVELOPMENT_BECOME_ANY_ACCOUNT
+[receive]
+	enableSignedPush = false
+[sendemail]
+	smtpServer = localhost
+[container]
+	user = gerrit
+	javaHome = /usr/java/jdk1.8.0_161/jre
+[sshd]
+	listenAddress = *:29418
+[httpd]
+	listenUrl = http://*:8082/
+[cache]
+	directory = cache

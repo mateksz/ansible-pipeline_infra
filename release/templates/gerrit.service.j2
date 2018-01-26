@@ -1,0 +1,13 @@
+[Unit]
+Description=gerrit service
+After=network.target
+   
+[Service]
+Type=forking
+ExecStart=/opt/gerrit/app_dir/bin/gerrit.sh start
+ExecStop=/opt/gerrit/app_dir/bin/gerrit.s stop
+User=gerrit
+Restart=on-abort
+   
+[Install]
+WantedBy=multi-user.target

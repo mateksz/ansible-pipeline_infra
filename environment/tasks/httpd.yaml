@@ -1,0 +1,19 @@
+- name: Install apache2
+  yum:
+    name: httpd
+    state: present
+  become: yes
+
+- name: Provide pet clinic virtual host file
+  template:
+    src: pet_clinic.conf.j2
+    dest: /etc/httpd/conf.d/pet_clinic.conf
+    owner: root
+  become: yes
+
+- name: Run and enable apache
+  service:
+    name: httpd
+    state: started
+    enabled: yes
+  become: yes

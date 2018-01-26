@@ -1,0 +1,12 @@
+---
+  - hosts: all
+    roles:
+      - common
+
+  - hosts: release
+    roles:
+      - release
+
+  - hosts: environment
+    roles: 
+     - environment

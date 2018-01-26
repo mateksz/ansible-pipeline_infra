@@ -1,0 +1,5 @@
+---
+# tasks file for release
+- import_tasks: jenkins.yaml
+- import_tasks: nexus.yaml
+- import_tasks: gerrit.yaml

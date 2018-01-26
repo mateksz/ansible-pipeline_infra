@@ -1,0 +1,57 @@
+---
+- name: Install git
+  yum:
+    name: git
+    state: present
+  become: yes
+
+- name: Create gerrit user
+  user: 
+    name: gerrit
+    home: /opt/gerrit
+  become: yes
+
+- name: Check if gerrit is installed and running
+  command: systemctl status gerrit
+  register: is_gerrit_installed
+  failed_when: is_gerrit_installed.rc !=0
+  ignore_errors: yes
+
+- name: Get gerrit
+  when: is_gerrit_installed|failed
+  get_url: 
+    url: https://www.gerritcodereview.com/download/gerrit-2.14.6.war
+    dest: /opt/gerrit
+  become: yes
+  become_user: gerrit
+
+- name: Set up gerrit
+  when: is_gerrit_installed|failed
+  command: java -jar /opt/gerrit/gerrit-2.14.6.war init --batch --no-auto-start -d /opt/gerrit/app_dir
+  become: yes
+  become_user: gerrit
+
+- name: Provide gerrit conf
+  when: is_gerrit_installed|failed
+  template:
+    src: gerrit.config.j2
+    dest: /opt/gerrit/app_dir/etc/gerrit.config
+    owner: gerrit
+    group: gerrit
+  become: yes
+
+- name: Provide gerrid systemd unit file
+  when: is_gerrit_installed|failed
+  template:
+    src: gerrit.service.j2
+    dest: /usr/lib/systemd/system/gerrit.service
+    owner: root
+  become: yes
+
+- name: Start gerrit
+  when: is_gerrit_installed|failed
+  service:
+    name: gerrit
+    state: started
+    enabled: yes
+  become: yes

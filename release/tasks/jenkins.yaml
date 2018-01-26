@@ -1,0 +1,24 @@
+- name: Download jenkins repo
+  get_url:
+    url: https://pkg.jenkins.io/redhat/jenkins.repo
+    dest: /etc/yum.repos.d/jenkins.repo
+  become: yes
+
+- name: Import jenkins repo key
+  rpm_key:
+    state: present
+    key: https://pkg.jenkins.io/redhat/jenkins.io.key
+  become: yes
+
+- name: Install jenkins
+  yum: 
+    name: jenkins 
+    state: present
+  become: yes
+
+- name: Enable jenkins
+  service: 
+   name: jenkins
+   state: started
+   enabled: yes
+  become: yes 

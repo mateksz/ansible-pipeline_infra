@@ -1,0 +1,57 @@
+- name: Install Mariadb plus required packages
+  yum:
+    name: "{{ item }}" 
+    state: present 
+  become: yes
+  with_items:
+    - epel-release
+    - gcc
+    - mariadb-server
+    - mariadb-devel
+    - python-pip  
+    - python-devel
+
+
+- name: Start mariadb
+  service:
+    name: mariadb
+    state: started
+    enabled: yes
+  become: yes
+
+- name: Install mysql-module
+  pip:
+    name: MySQL-python
+  become: yes
+
+- name: Delete anonymous user
+  mysql_user: 
+    login_user: root
+    name: ""
+    state: absent
+
+- name: Delete test database
+  mysql_db:
+    login_user: root
+    db: test
+    state: absent
+
+- name: Create pet_clinic base
+  mysql_db:
+    login_user: root
+    db: pet_clinic
+    state: present
+
+- name: Create pet_clinic user
+  mysql_user:
+    login_user: root
+    name: pet_clinic
+    state: present
+    password: "{{ pet_clinic_user_pass }}"
+    priv: pet_clinic.*:ALL,GRANT
+    host: "{{ item }}"
+  with_items:
+    - "{{ ansible_hostname }}"
+    - 127.0.0.1
+    - ::1
+    - localhost

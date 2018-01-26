@@ -1,0 +1,23 @@
+---
+# tasks file for common
+#
+   - name: Check if java sdk is installed
+     command: yum list installed jdk1.8.x86_64
+     register: is_java_installed
+     failed_when: is_java_installed.rc != 0
+     ignore_errors: yes 
+     
+   - name: Get java rpm
+     when: is_java_installed|failed
+     get_url:
+       url: http://download.oracle.com/otn-pub/java/jdk/8u161-b12/2f38c3b165be4555a1fa6e98c45e0808/jdk-8u161-linux-x64.rpm
+       headers: 'Cookie: oraclelicense=accept-securebackup-cookie'
+       dest: /tmp
+       
+
+   - name: Install java
+     when: is_java_installed|failed
+     yum:
+       name: /tmp/jdk-8u161-linux-x64.rpm
+       state: present
+     become: yes
